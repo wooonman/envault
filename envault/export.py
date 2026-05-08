@@ -33,10 +33,24 @@ def to_shell_export(entries: Dict[str, str]) -> str:
     return "\n".join(lines) + ("\n" if lines else "")
 
 
+def to_csv(entries: Dict[str, str]) -> str:
+    """Render a dict of env vars as a CSV string with 'key,value' rows."""
+    lines: List[str] = ["key,value"]
+    for key, value in sorted(entries.items()):
+        # Wrap value in quotes if it contains a comma, quote, or newline
+        if any(c in value for c in (",", '"', "\n")):
+            escaped = value.replace('"', '""')
+            lines.append(f'{key},"{escaped}"')
+        else:
+            lines.append(f"{key},{value}")
+    return "\n".join(lines) + "\n"
+
+
 FORMATS = {
     "dotenv": to_dotenv,
     "json": to_json,
     "shell": to_shell_export,
+    "csv": to_csv,
 }
 
 
