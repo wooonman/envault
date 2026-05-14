@@ -40,6 +40,23 @@ def move_key(
 
     Decrypts with password and re-encrypts under dest_key.
     Raises MoveError on conflicts or missing keys.
+
+    Args:
+        src_vault_path: Path to the source vault file.
+        src_key: The key to move from the source vault.
+        dest_key: The key name to use in the destination vault.
+        password: Password used to decrypt and re-encrypt the value.
+        dest_vault_path: Path to the destination vault. Defaults to src_vault_path
+            for an in-vault rename.
+        overwrite: If True, overwrite an existing dest_key in the destination.
+            Defaults to False.
+
+    Returns:
+        A MoveResult describing the completed operation.
+
+    Raises:
+        MoveError: If src_key is missing, source and destination are identical,
+            or dest_key already exists and overwrite is False.
     """
     dest_vault_path = dest_vault_path or src_vault_path
     cross_vault = dest_vault_path != src_vault_path
