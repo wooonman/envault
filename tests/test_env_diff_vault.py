@@ -87,6 +87,14 @@ def test_format_vault_diff_empty_result():
     assert format_vault_diff(result) == "(no entries)"
 
 
+def test_format_vault_diff_contains_key_names(vault_a, vault_b):
+    """Ensure formatted diff output actually includes the key names."""
+    result = diff_vaults(vault_a, vault_b, PASSWORD)
+    output = format_vault_diff(result)
+    assert "KEY1" in output  # removed key should appear
+    assert "KEY3" in output  # added key should appear
+
+
 def test_different_passwords_per_vault(tmp_path):
     env_a = tmp_path / "a.env"
     env_a.write_text("FOO=bar\n")
