@@ -47,11 +47,26 @@ def assert_not_pinned(vault: dict[str, Any], key: str, action: str = "modify") -
         raise PinError(f"Key '{key}' is pinned and cannot be {action}d. Unpin it first.")
 
 
+def pin_keys(vault: dict[str, Any], keys: list[str]) -> list[str]:
+    """Pin multiple entries at once. Raises PinError if any key does not exist in vault.
+
+    All keys are validated before any pinning occurs, so the vault is not
+    partially modified on failure.
+    """
+    missing = [k for k in keys if k not in vault]
+    if missing:
+        missing_str = ", ".join(f"'{k}'" for k in missing)
+        raise PinError(f"Keys not found in vault: {missing_str}")
+    for key in keys:
+        pin_key(vault, key)
+    return get_pins(vault)
+
+
 def format_pin_report(pins: list[str]) -> str:
     """Return a human-readable list of pinned keys."""
     if not pins:
         return "No entries are currently pinned."
     lines = ["Pinned entries:"]
     for p in pins:
-        lines.append(f"  • {p}")
+        lines.append(f"  \u2022 {p}")
     return "\n".join(lines)
